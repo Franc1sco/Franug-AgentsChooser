@@ -62,7 +62,7 @@ char TMaster[][][] =
 	{"The Elite Mr. Muhlik | Elite Crew", "models/player/custom_player/legacy/tm_leet_variantf.mdl"},
 }
 
-#define DATA "1.1"
+#define DATA "1.0"
 
 public Plugin myinfo =
 {
@@ -78,9 +78,7 @@ char g_ctAgent[MAXPLAYERS + 1][128], g_tAgent[MAXPLAYERS + 1][128];
 
 Handle c_CTAgent, c_TAgent;
 
-ConVar cv_timer, cv_noOverwritte, cv_instant, cv_autoopen;
-
-bool _checkedMsg[MAXPLAYERS + 1];
+ConVar cv_timer, cv_noOverwritte;
 
 public void OnPluginStart()
 {
@@ -94,8 +92,6 @@ public void OnPluginStart()
 	
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	
-	cv_autoopen = CreateConVar("sm_csgoagents_autoopen", "0", "Enable or disable auto open menu when you connect and you didnt select a agent yet");
-	cv_instant = CreateConVar("sm_csgoagents_instantly", "1", "Enable or disable apply agents skins instantly");
 	cv_timer = CreateConVar("sm_csgoagents_timer", "0.2", "Time on Spawn for apply agent skins");
 	cv_noOverwritte = CreateConVar("sm_csgoagents_nooverwrittecustom", "1", "No apply agent model if the user already have a custom model. 1 = no apply when custom model, 0 = disable this feature");
 	
@@ -284,7 +280,6 @@ public void OnClientDisconnect(int client)
 	
 	strcopy(g_ctAgent[client], 128, "");
 	strcopy(g_tAgent[client], 128, "");
-	_checkedMsg[client] = false;
 }
 
 public Action Command_Main(client, args)
@@ -498,10 +493,7 @@ public int AgentChoosed(Handle:menu, MenuAction:action, param1, param2)
 				strcopy(g_tAgent[param1], 128, model);
 			}
 				
-			if(cv_instant.BoolValue)
-				PrintToChat(param1, "Agent model choosed!");
-			else
-				PrintToChat(param1, "Agent model choosed! you will have it in the next spawn");
+			PrintToChat(param1, "Agent model choosed!");
 			
 			switch(g_iCategory[param1])
 			{
@@ -523,7 +515,7 @@ public int AgentChoosed(Handle:menu, MenuAction:action, param1, param2)
 				}
 			}
 			
-			if(cv_instant.BoolValue && IsPlayerAlive(param1) && GetClientTeam(param1) == g_iTeam[param1])
+			if(IsPlayerAlive(param1) && GetClientTeam(param1) == g_iTeam[param1])
 			{
 				if(cv_noOverwritte.BoolValue)
 				{
@@ -571,15 +563,7 @@ public Action Timer_ApplySkin(Handle timer, int id)
 	else if(team == CS_TEAM_T)
 		strcopy(model, sizeof(model), g_tAgent[client]);
 		
-	if (strlen(model) < 1)
-	{
-		if(cv_autoopen.BoolValue && !_checkedMsg[client])
-		{
-			_checkedMsg[client] = true;
-			Command_Main(client, 0);
-		}
-		return;
-	}
+	if (strlen(model) < 1)return;
 	
 	if(cv_noOverwritte.BoolValue)
 	{
@@ -592,15 +576,5 @@ public Action Timer_ApplySkin(Handle timer, int id)
 		}
 		SetEntityModel(client, model);
 	}
-	else
-		SetEntityModel(client, model);
 	
-}
-
-stock bool isAgentSelected(int client)
-{
-	if(strlen(g_tAgent[client]) < 1 && strlen(g_ctAgent[client]) < 1)
-		return true;
-		
-	return false;
 }
