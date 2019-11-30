@@ -89,8 +89,8 @@ public void OnPluginStart()
 	RegAdminCmd("sm_agents_generatemodels", Command_GenerateModelsForSkinchooser, ADMFLAG_ROOT);
 	RegAdminCmd("sm_agents_generatestoremodels", Command_GenerateModelsForStore, ADMFLAG_ROOT);
 	
-	c_CTAgent = RegClientCookie("CTAgent", "", CookieAccess_Private);
-	c_TAgent = RegClientCookie("TAgent", "", CookieAccess_Private);
+	c_CTAgent = RegClientCookie("CTAgent_b", "", CookieAccess_Private);
+	c_TAgent = RegClientCookie("TAgent_b", "", CookieAccess_Private);
 	
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	
