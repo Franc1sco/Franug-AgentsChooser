@@ -9,7 +9,6 @@ char CTDistinguished[][][] =
 	{"Seal Team 6 Soldier | NSWC SEAL", "models/player/custom_player/legacy/ctm_st6_variante.mdl"},
 	{"3rd Commando Company | KSK", "models/player/custom_player/legacy/ctm_st6_variantk.mdl"},
 	{"Operator | FBI SWAT", "models/player/custom_player/legacy/ctm_fbi_variantf.mdl"},
-	{"Ground Rebel  | Elite Crew", "models/player/custom_player/legacy/tm_leet_variantg.mdl"},
 	{"B Squadron Officer | SAS", "models/player/custom_player/legacy/ctm_sas_variantf.mdl"},
 	
 }
@@ -18,6 +17,7 @@ char TDistinguished[][][] =
 {
 	{"Enforcer | Phoenix", "models/player/custom_player/legacy/tm_phoenix_variantf.mdl"},
 	{"Soldier | Phoenix", "models/player/custom_player/legacy/tm_phoenix_varianth.mdl"},
+	{"Ground Rebel  | Elite Crew", "models/player/custom_player/legacy/tm_leet_variantg.mdl"},
 }
 
 char CTExceptional[][][] =
@@ -62,7 +62,7 @@ char TMaster[][][] =
 	{"The Elite Mr. Muhlik | Elite Crew", "models/player/custom_player/legacy/tm_leet_variantf.mdl"},
 }
 
-#define DATA "1.1.1"
+#define DATA "1.1.2"
 
 public Plugin myinfo =
 {
