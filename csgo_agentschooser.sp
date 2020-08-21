@@ -54,7 +54,7 @@ char TExceptional[][][] =
 
 char CTSuperior[][][] =
 {
-	{"Markus Delrow | FBI", "models/player/custom_player/legacy/ctm_fbi_varianth.mdl"},
+	{"Michael Syfers  | FBI Sniper", "models/player/custom_player/legacy/ctm_fbi_varianth.mdl"},
 	{"'Two Times' McCoy | USAF TACP", "models/player/custom_player/legacy/ctm_st6_variantm.mdl"},
 	
 }
