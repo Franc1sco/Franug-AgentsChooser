@@ -15,16 +15,18 @@
  * this program. If not, see http://www.gnu.org/licenses/.
  */
 
-#include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
 #include <cstrike>
 #include <clientprefs>
 
+#pragma semicolon 1
+#pragma newdecls required
+
 #define HIDE_CROSSHAIR_CSGO 1<<8
 #define HIDE_RADAR_CSGO 1<<12
 
-Handle g_hTimer[MAXPLAYERS+1] = INVALID_HANDLE;
+Handle g_hTimer[MAXPLAYERS+1] = null;
 
 // Valve Agents list by category and team
 char CTDistinguished[][][] =
@@ -38,7 +40,7 @@ char CTDistinguished[][][] =
 	{"B Squadron Officer | SAS",							"models/player/custom_player/legacy/ctm_sas_variantf.mdl"},
 	{"Chem-Haz Specialist | SWAT",							"models/player/custom_player/legacy/ctm_swat_variantj.mdl"},
 	{"Bio-Haz Specialist | SWAT",							"models/player/custom_player/legacy/ctm_swat_varianth.mdl"},
-}
+};
 
 char TDistinguished[][][] =
 {
@@ -49,7 +51,7 @@ char TDistinguished[][][] =
 	{"Ground Rebel  | Elite Crew",							"models/player/custom_player/legacy/tm_leet_variantg.mdl"},
 	{"Street Soldier | Phoenix",							"models/player/custom_player/legacy/tm_phoenix_varianti.mdl"},
 	{"Dragomir | Sabre Footsoldier",						"models/player/custom_player/legacy/tm_balkan_variantl.mdl"},
-}
+};
 
 char CTExceptional[][][] =
 {
@@ -61,7 +63,7 @@ char CTExceptional[][][] =
 	{"John 'Van Healen' Kask | SWAT",						"models/player/custom_player/legacy/ctm_swat_variantg.mdl"},
 	{"Sergeant Bombson | SWAT",								"models/player/custom_player/legacy/ctm_swat_varianti.mdl"},
 	{"'Blueberries' Buckshot | NSWC SEAL",					"models/player/custom_player/legacy/ctm_st6_variantj.mdl"},
-}
+};
 
 char TExceptional[][][] =
 {
@@ -73,7 +75,7 @@ char TExceptional[][][] =
 	{"Dragomir | Sabre",									"models/player/custom_player/legacy/tm_balkan_variantf.mdl"},
 	{"Getaway Sally | The Professionals",					"models/player/custom_player/legacy/tm_professional_varj.mdl"},
 	{"Little Kev | The Professionals",						"models/player/custom_player/legacy/tm_professional_varh.mdl"},
-}
+};
 
 char CTSuperior[][][] =
 {
@@ -83,7 +85,7 @@ char CTSuperior[][][] =
 	{"'Two Times' McCoy | USAF TACP",						"models/player/custom_player/legacy/ctm_st6_variantm.mdl"},
 	{"1st Lieutenant Farlow | SWAT",						"models/player/custom_player/legacy/ctm_swat_variantf.mdl"},
 	{"'Two Times' McCoy | TACP Cavalry",					"models/player/custom_player/legacy/ctm_st6_variantl.mdl"},
-}
+};
 
 char TSuperior[][][] =
 {
@@ -96,7 +98,7 @@ char TSuperior[][][] =
 	{"Number K | The Professionals",						"models/player/custom_player/legacy/tm_professional_vari.mdl"},
 	{"Safecracker Voltzmann | The Professionals",			"models/player/custom_player/legacy/tm_professional_varg.mdl"},
 	{"Rezan the Redshirt | Sabre",							"models/player/custom_player/legacy/tm_balkan_variantk.mdl"},
-}
+};
 
 char CTMaster[][][] =
 {
@@ -106,7 +108,7 @@ char CTMaster[][][] =
 	{"Lt. Commander Ricksaw | NSWC SEAL",					"models/player/custom_player/legacy/ctm_st6_varianti.mdl"},
 	{"Special Agent Ava | FBI",								"models/player/custom_player/legacy/ctm_fbi_variantb.mdl"},
 	{"Cmdr. Mae 'Dead Cold' Jamison | SWAT",				"models/player/custom_player/legacy/ctm_swat_variante.mdl"},
-}
+};
 
 char TMaster[][][] =
 {
@@ -120,7 +122,7 @@ char TMaster[][][] =
 	{"Sir Bloody Skullhead Darryl | The Professionals",		"models/player/custom_player/legacy/tm_professional_varf2.mdl"},
 	{"Sir Bloody Darryl Royale | The Professionals",		"models/player/custom_player/legacy/tm_professional_varf3.mdl"},
 	{"Sir Bloody Loudmouth Darryl | The Professionals",		"models/player/custom_player/legacy/tm_professional_varf4.mdl"},
-}
+};
 
 #define DATA "1.2"
 
@@ -136,7 +138,7 @@ public Plugin myinfo =
 int g_iTeam[MAXPLAYERS + 1], g_iCategory[MAXPLAYERS + 1];
 char g_ctAgent[MAXPLAYERS + 1][128], g_tAgent[MAXPLAYERS + 1][128];
 
-Handle c_CTAgent, c_TAgent;
+Cookie c_CTAgent, c_TAgent;
 
 ConVar cv_timer, cv_noOverwritte, cv_instant, cv_autoopen, cv_PreviewDuration, cv_HidePlayers;
 
@@ -149,8 +151,8 @@ public void OnPluginStart()
 	RegAdminCmd("sm_agents_generatemodels", Command_GenerateModelsForSkinchooser, ADMFLAG_ROOT);
 	RegAdminCmd("sm_agents_generatestoremodels", Command_GenerateModelsForStore, ADMFLAG_ROOT);
 	
-	c_CTAgent = RegClientCookie("CTAgent_b", "", CookieAccess_Private);
-	c_TAgent = RegClientCookie("TAgent_b", "", CookieAccess_Private);
+	c_CTAgent = new Cookie("CTAgent_b", "", CookieAccess_Private);
+	c_TAgent = new Cookie("TAgent_b", "", CookieAccess_Private);
 	
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("player_team", OnPlayerTeam, EventHookMode_Post);
@@ -175,7 +177,7 @@ public void OnPluginStart()
 	AutoExecConfig(true, "csgo_agentschooser");
 }
 
-public void OnCvarChange(ConVar convar, char[] oldValue, char[] newValue)
+void OnCvarChange(ConVar convar, const char[] oldValue, const char[] newValue)
 {
 	int iNewValue = StringToInt(newValue);
 	int iOldValue = StringToInt(oldValue);
@@ -205,67 +207,67 @@ public void OnCvarChange(ConVar convar, char[] oldValue, char[] newValue)
 }
 
 // I generate these files automatically with code instead of do it manually like a good programmer :p
-public Action Command_GenerateModelsForSkinchooser(client, args)
+Action Command_GenerateModelsForSkinchooser(int client, int args)
 {
-	Handle kv = CreateKeyValues("Models");
+	KeyValues kv = new KeyValues("Models");
 	
-	KvJumpToKey(kv, "CSGO Agents", true);
-	KvJumpToKey(kv, "Team1", true);
+	kv.JumpToKey("CSGO Agents", true);
+	kv.JumpToKey("Team1", true);
 	
 	for (int i = 0; i < sizeof(TDistinguished); i++)
 	{
-		KvJumpToKey(kv, TDistinguished[i][0], true);
-		KvSetString(kv, "path", TDistinguished[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(TDistinguished[i][0], true);
+		kv.SetString("path", TDistinguished[i][1]);
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(TExceptional); i++)
 	{
-		KvJumpToKey(kv, TExceptional[i][0], true);
-		KvSetString(kv, "path", TExceptional[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(TExceptional[i][0], true);
+		kv.SetString("path", TExceptional[i][1]);
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(TSuperior); i++)
 	{
-		KvJumpToKey(kv, TSuperior[i][0], true);
-		KvSetString(kv, "path", TSuperior[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(TSuperior[i][0], true);
+		kv.SetString("path", TSuperior[i][1]);
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(TMaster); i++)
 	{
-		KvJumpToKey(kv, TMaster[i][0], true);
-		KvSetString(kv, "path", TMaster[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(TMaster[i][0], true);
+		kv.SetString("path", TMaster[i][1]);
+		kv.GoBack();
 	}
 	
-	KvGoBack(kv);
-	KvJumpToKey(kv, "Team2", true);
+	kv.GoBack();
+	kv.JumpToKey("Team2", true);
 	
 	for (int i = 0; i < sizeof(CTDistinguished); i++)
 	{
-		KvJumpToKey(kv, CTDistinguished[i][0], true);
-		KvSetString(kv, "path", CTDistinguished[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(CTDistinguished[i][0], true);
+		kv.SetString("path", CTDistinguished[i][1]);
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(CTExceptional); i++)
 	{
-		KvJumpToKey(kv, CTExceptional[i][0], true);
-		KvSetString(kv, "path", CTExceptional[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(CTExceptional[i][0], true);
+		kv.SetString("path", CTExceptional[i][1]);
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(CTSuperior); i++)
 	{
-		KvJumpToKey(kv, CTSuperior[i][0], true);
-		KvSetString(kv, "path", CTSuperior[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(CTSuperior[i][0], true);
+		kv.SetString("path", CTSuperior[i][1]);
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(CTMaster); i++)
 	{
-		KvJumpToKey(kv, CTMaster[i][0], true);
-		KvSetString(kv, "path", CTMaster[i][1]);
-		KvGoBack(kv);
+		kv.JumpToKey(CTMaster[i][0], true);
+		kv.SetString("path", CTMaster[i][1]);
+		kv.GoBack();
 	}
-	KvRewind(kv);
-	KeyValuesToFile(kv, "addons/sourcemod/configs/sm_skinchooser_withagents.cfg");
+	kv.Rewind();
+	kv.ExportToFile("addons/sourcemod/configs/sm_skinchooser_withagents.cfg");
 	delete kv;
 	
 	ReplyToCommand(client, "CFG file generated for models");
@@ -273,92 +275,92 @@ public Action Command_GenerateModelsForSkinchooser(client, args)
 	return Plugin_Handled;
 }
 
-public Action Command_GenerateModelsForStore(client, args)
+Action Command_GenerateModelsForStore(int client, int args)
 {
 	char price[32] = "3000"; // default price
-	Handle kv = CreateKeyValues("Store");
+	KeyValues kv = new KeyValues("Store");
 	
-	KvJumpToKey(kv, "CSGO Agents", true);
-	KvJumpToKey(kv, "Terrorist", true);
+	kv.JumpToKey("CSGO Agents", true);
+	kv.JumpToKey("Terrorist", true);
 	
 	for (int i = 0; i < sizeof(TDistinguished); i++)
 	{
-		KvJumpToKey(kv, TDistinguished[i][0], true);
-		KvSetString(kv, "model", TDistinguished[i][1]);
-		KvSetString(kv, "team", "2");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(TDistinguished[i][0], true);
+		kv.SetString("model", TDistinguished[i][1]);
+		kv.SetString("team", "2");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(TExceptional); i++)
 	{
-		KvJumpToKey(kv, TExceptional[i][0], true);
-		KvSetString(kv, "model", TExceptional[i][1]);
-		KvSetString(kv, "team", "2");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(TExceptional[i][0], true);
+		kv.SetString("model", TExceptional[i][1]);
+		kv.SetString("team", "2");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(TSuperior); i++)
 	{
-		KvJumpToKey(kv, TSuperior[i][0], true);
-		KvSetString(kv, "model", TSuperior[i][1]);
-		KvSetString(kv, "team", "2");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(TSuperior[i][0], true);
+		kv.SetString("model", TSuperior[i][1]);
+		kv.SetString("team", "2");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(TMaster); i++)
 	{
-		KvJumpToKey(kv, TMaster[i][0], true);
-		KvSetString(kv, "model", TMaster[i][1]);
-		KvSetString(kv, "team", "2");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(TMaster[i][0], true);
+		kv.SetString("model", TMaster[i][1]);
+		kv.SetString("team", "2");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	
-	KvGoBack(kv);
-	KvJumpToKey(kv, "Counter-Terrorist", true);
+	kv.GoBack();
+	kv.JumpToKey("Counter-Terrorist", true);
 	
 	for (int i = 0; i < sizeof(CTDistinguished); i++)
 	{
-		KvJumpToKey(kv, CTDistinguished[i][0], true);
-		KvSetString(kv, "model", CTDistinguished[i][1]);
-		KvSetString(kv, "team", "3");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(CTDistinguished[i][0], true);
+		kv.SetString("model", CTDistinguished[i][1]);
+		kv.SetString("team", "3");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(CTExceptional); i++)
 	{
-		KvJumpToKey(kv, CTExceptional[i][0], true);
-		KvSetString(kv, "model", CTExceptional[i][1]);
-		KvSetString(kv, "team", "3");
-		KvSetString(kv, "price", price); 
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(CTExceptional[i][0], true);
+		kv.SetString("model", CTExceptional[i][1]);
+		kv.SetString("team", "3");
+		kv.SetString("price", price); 
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(CTSuperior); i++)
 	{
-		KvJumpToKey(kv, CTSuperior[i][0], true);
-		KvSetString(kv, "model", CTSuperior[i][1]);
-		KvSetString(kv, "team", "3");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(CTSuperior[i][0], true);
+		kv.SetString("model", CTSuperior[i][1]);
+		kv.SetString("team", "3");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
 	for (int i = 0; i < sizeof(CTMaster); i++)
 	{
-		KvJumpToKey(kv, CTMaster[i][0], true);
-		KvSetString(kv, "model", CTMaster[i][1]);
-		KvSetString(kv, "team", "3");
-		KvSetString(kv, "price", price);
-		KvSetString(kv, "type", "playerskin");
-		KvGoBack(kv);
+		kv.JumpToKey(CTMaster[i][0], true);
+		kv.SetString("model", CTMaster[i][1]);
+		kv.SetString("team", "3");
+		kv.SetString("price", price);
+		kv.SetString("type", "playerskin");
+		kv.GoBack();
 	}
-	KvRewind(kv);
-	KeyValuesToFile(kv, "addons/sourcemod/configs/storeitems_withagents.txt");
+	kv.Rewind();
+	kv.ExportToFile("addons/sourcemod/configs/storeitems_withagents.txt");
 	delete kv;
 	
 	ReplyToCommand(client, "CFG file generated for models");
@@ -368,26 +370,26 @@ public Action Command_GenerateModelsForStore(client, args)
 
 public void OnClientCookiesCached(int client)
 {
-	GetClientCookie(client, c_CTAgent, g_ctAgent[client], 128);
-	GetClientCookie(client, c_TAgent, g_tAgent[client], 128);
+	c_CTAgent.Get(client, g_ctAgent[client], 128);
+	c_TAgent.Get(client, g_tAgent[client], 128);
 }
 
 public void OnClientDisconnect(int client)
 {
 	if(!IsFakeClient(client) && AreClientCookiesCached(client))
 	{
-		SetClientCookie(client, c_TAgent, g_tAgent[client]);
-		SetClientCookie(client, c_CTAgent, g_ctAgent[client]);
+		c_TAgent.Set(client, g_tAgent[client]);
+		c_CTAgent.Set(client, g_ctAgent[client]);
 	}
 	
 	strcopy(g_ctAgent[client], 128, "");
 	strcopy(g_tAgent[client], 128, "");
 	_checkedMsg[client] = false;
 	
-	if(g_hTimer[client] != INVALID_HANDLE)
+	if(g_hTimer[client] != null)
 	{
 		KillTimer(g_hTimer[client]);
-		g_hTimer[client] = INVALID_HANDLE;
+		g_hTimer[client] = null;
 	}
 	
 	if(!IsClientSourceTV(client))
@@ -396,41 +398,37 @@ public void OnClientDisconnect(int client)
 	}
 }
 
-public Action Command_Main(client, args)
+Action Command_Main(int client, int args)
 {
 	Menu menu = new Menu(SelectTeam, MenuAction_Select  | MenuAction_End);
 	
-	SetMenuTitle(menu, "Choose Agents Team:");
+	menu.SetTitle("Choose Agents Team:");
 	
-	AddMenuItem(menu, "", "Counter-Terrorist team");
-	AddMenuItem(menu, "", "Terrorist team");
-	SetMenuExitButton(menu, true);
-	DisplayMenu(menu, client, MENU_TIME_FOREVER);
+	menu.AddItem("", "Counter-Terrorist team");
+	menu.AddItem("", "Terrorist team");
+	menu.ExitButton = true;
+	menu.Display(client, MENU_TIME_FOREVER);
 	
 	return Plugin_Handled;
 }
 
-public int SelectTeam(Menu menu, MenuAction action, int param1, int param2) 
+int SelectTeam(Menu menu, MenuAction action, int client, int selection) 
 {
-	switch (action)
+	switch(action)
 	{
-		case MenuAction_Select:
+		case	MenuAction_Select:
 		{
-			switch(param2)
+			switch(selection)
 			{
-				case 0:{
-					g_iTeam[param1] = CS_TEAM_CT;
-				}
-				case 1:{
-					g_iTeam[param1] = CS_TEAM_T;
-				}
+				case	0:	g_iTeam[client] = CS_TEAM_CT;
+				case	1:	g_iTeam[client] = CS_TEAM_T;
 			}
-			OpenAgentsMenu(param1);
+			OpenAgentsMenu(client);
 		}
 
-		case MenuAction_End:
+		case	MenuAction_End:
 		{
-			CloseHandle(menu);
+			delete menu;
 		}
 	}
 }
@@ -439,257 +437,256 @@ void OpenAgentsMenu(int client)
 {
 	Menu menu = new Menu(SelectType, MenuAction_Select  | MenuAction_End);
 
-	SetMenuTitle(menu, "Choose Agents type:");
+	menu.SetTitle("Choose Agents type:");
 	
-	AddMenuItem(menu, "", "Use Default skins");
+	menu.AddItem("", "Use Default skins");
+	menu.AddItem("", "Distinguished Agents");
+	menu.AddItem("", "Exceptional Agents");
+	menu.AddItem("", "Superior Agents");
+	menu.AddItem("", "Master Agents");
 	
-	AddMenuItem(menu, "", "Distinguished Agents");
-	
-	AddMenuItem(menu, "", "Exceptional Agents");
-	
-	AddMenuItem(menu, "", "Superior Agents");
-	
-	AddMenuItem(menu, "", "Master Agents");
 	//SetMenuPagination(menu, MENU_NO_PAGINATION);
-	SetMenuExitBackButton(menu, true);
-	DisplayMenu(menu, client, MENU_TIME_FOREVER);
+	
+	menu.ExitBackButton = true;
+	menu.Display(client, MENU_TIME_FOREVER);
 }
 
-public int SelectType(Handle:menu, MenuAction:action, param1, param2)
+int SelectType(Menu menu, MenuAction action, int client, int selection)
 {
-	switch (action)
+	switch(action)
 	{
-		case MenuAction_Select:
+		case	MenuAction_Select:
 		{
-			switch(param2)
+			switch(selection)
 			{
-				case 0:{
+				case	0:
+				{
 					
-					if(IsPlayerAlive(param1))CS_UpdateClientModel(param1);
+					if(IsPlayerAlive(client))
+						CS_UpdateClientModel(client);
 					
-					strcopy(g_ctAgent[param1], 128, "");
-					strcopy(g_tAgent[param1], 128, "");
-					PrintToChat(param1, "You dont use a agent model now");
+					strcopy(g_ctAgent[client], 128, "");
+					strcopy(g_tAgent[client], 128, "");
+					PrintToChat(client, "You dont use a agent model now");
 					
-					OpenAgentsMenu(param1);
+					OpenAgentsMenu(client);
 				}
-				case 1:{
-					DisMenu(param1, 0);
-				}
-				case 2:{
-					ExMenu(param1, 0);
-				}
-				case 3:{
-					SuMenu(param1, 0);
-				}
-				case 4:{
-					MaMenu(param1, 0);
-				}
+				case	1:	DisMenu(client, 0);
+				case	2:	ExMenu(client, 0);
+				case	3:	SuMenu(client, 0);
+				case	4:	MaMenu(client, 0);
 			}
-			g_iCategory[param1] = param2;
+			g_iCategory[client] = selection;
 		}
 		
-		case MenuAction_Cancel, MenuCancel_ExitBack:
- 		{
- 			Command_Main(param1, 0);
+		case	MenuAction_Cancel, MenuCancel_ExitBack:
+		{
+ 			Command_Main(client, 0);
  		}
 
-		case MenuAction_End:
+		case	MenuAction_End:
 		{
-			CloseHandle(menu);
+			delete menu;
 		}
 	}
 }
 
-void DisMenu(int client, int num)
-{
-	new Handle:menu = CreateMenu(AgentChoosed, MenuAction_Select  | MenuAction_End);
-	SetMenuTitle(menu, "Distinguished Agents");
-	if(g_iTeam[client] == CS_TEAM_CT){
-		
-		for (int i = 0; i < sizeof(CTDistinguished); i++)
-			AddMenuItem(menu, CTDistinguished[i][1], CTDistinguished[i][0], 
-			StrEqual(g_ctAgent[client], CTDistinguished[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+void DisMenu(int client, int num)	{
+	Menu menu = new Menu(AgentChoosed, MenuAction_Select  | MenuAction_End);
+	
+	menu.SetTitle("Distinguished Agents");
+	
+	if(g_iTeam[client] == CS_TEAM_CT)
+	{
+		for(int i = 0; i < sizeof(CTDistinguished); i++)
+		{
+			menu.AddItem(CTDistinguished[i][1], CTDistinguished[i][0], 
+			StrEqual(g_ctAgent[client], CTDistinguished[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	else{
-		
-		for (int i = 0; i < sizeof(TDistinguished); i++)
-			AddMenuItem(menu, TDistinguished[i][1], TDistinguished[i][0], 
-			StrEqual(g_tAgent[client], TDistinguished[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+	else
+	{
+		for(int i = 0; i < sizeof(TDistinguished); i++)	{
+			menu.AddItem(TDistinguished[i][1], TDistinguished[i][0], 
+			StrEqual(g_tAgent[client], TDistinguished[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	SetMenuExitBackButton(menu, true);
-	DisplayMenuAtItem(menu, client, num, MENU_TIME_FOREVER);
+	
+	menu.ExitBackButton = true;
+	menu.DisplayAt(client, num, MENU_TIME_FOREVER);
 }
 
 void ExMenu(int client, int num)
 {
-	new Handle:menu = CreateMenu(AgentChoosed, MenuAction_Select  | MenuAction_End);
-	SetMenuTitle(menu, "Exceptional Agents");
-	if(g_iTeam[client] == CS_TEAM_CT){
-		
-		for (int i = 0; i < sizeof(CTExceptional); i++)
-			AddMenuItem(menu, CTExceptional[i][1], CTExceptional[i][0], 
-			StrEqual(g_ctAgent[client], CTExceptional[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+	Menu menu = new Menu(AgentChoosed, MenuAction_Select  | MenuAction_End);
+	menu.SetTitle("Exceptional Agents");
+	if(g_iTeam[client] == CS_TEAM_CT)
+	{
+		for(int i = 0; i < sizeof(CTExceptional); i++)
+		{
+			menu.AddItem(CTExceptional[i][1], CTExceptional[i][0], 
+			StrEqual(g_ctAgent[client], CTExceptional[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	else{
-		
-		for (int i = 0; i < sizeof(TExceptional); i++)
-			AddMenuItem(menu, TExceptional[i][1], TExceptional[i][0], 
-			StrEqual(g_tAgent[client], TExceptional[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+	else
+	{
+		for(int i = 0; i < sizeof(TExceptional); i++)
+		{
+			menu.AddItem(TExceptional[i][1], TExceptional[i][0], 
+			StrEqual(g_tAgent[client], TExceptional[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	SetMenuExitBackButton(menu, true);
-	DisplayMenuAtItem(menu, client, num, MENU_TIME_FOREVER);
+	menu.ExitBackButton = true;
+	menu.DisplayAt(client, num, MENU_TIME_FOREVER);
 }
 
 void SuMenu(int client, int num)
 {
-	new Handle:menu = CreateMenu(AgentChoosed, MenuAction_Select  | MenuAction_End);
-	SetMenuTitle(menu, "Superior Agents");
-	if(g_iTeam[client] == CS_TEAM_CT){
-		
-		for (int i = 0; i < sizeof(CTSuperior); i++)
-			AddMenuItem(menu, CTSuperior[i][1], CTSuperior[i][0], 
-			StrEqual(g_ctAgent[client], CTSuperior[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+	Menu menu = new Menu(AgentChoosed, MenuAction_Select  | MenuAction_End);
+	
+	menu.SetTitle("Superior Agents");
+	
+	if(g_iTeam[client] == CS_TEAM_CT)
+	{
+		for(int i = 0; i < sizeof(CTSuperior); i++)
+		{
+			menu.AddItem(CTSuperior[i][1], CTSuperior[i][0], 
+			StrEqual(g_ctAgent[client], CTSuperior[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	else{
-		
-		for (int i = 0; i < sizeof(TSuperior); i++)
-			AddMenuItem(menu, TSuperior[i][1], TSuperior[i][0], 
-			StrEqual(g_tAgent[client], TSuperior[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
-			
+	else
+	{
+		for(int i = 0; i < sizeof(TSuperior); i++)
+		{
+			menu.AddItem(TSuperior[i][1], TSuperior[i][0], 
+			StrEqual(g_tAgent[client], TSuperior[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}	
 	}
-	SetMenuExitBackButton(menu, true);
-	DisplayMenuAtItem(menu, client, num, MENU_TIME_FOREVER);
+	
+	menu.ExitBackButton = true;
+	menu.DisplayAt(client, num, MENU_TIME_FOREVER);
 }
 
 void MaMenu(int client, int num)
 {
-	new Handle:menu = CreateMenu(AgentChoosed, MenuAction_Select  | MenuAction_End);
-	SetMenuTitle(menu, "Master Agents");
-	if(g_iTeam[client] == CS_TEAM_CT){
-		
-		for (int i = 0; i < sizeof(CTMaster); i++)
-			AddMenuItem(menu, CTMaster[i][1], CTMaster[i][0], 
-			StrEqual(g_ctAgent[client], CTMaster[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+	Menu menu = new Menu(AgentChoosed, MenuAction_Select  | MenuAction_End);
+	
+	menu.SetTitle("Master Agents");
+	
+	if(g_iTeam[client] == CS_TEAM_CT)
+	{
+		for(int i = 0; i < sizeof(CTMaster); i++)
+		{
+			menu.AddItem(CTMaster[i][1], CTMaster[i][0], 
+			StrEqual(g_ctAgent[client], CTMaster[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	else{
-		
-		for (int i = 0; i < sizeof(TMaster); i++)
-			AddMenuItem(menu, TMaster[i][1], TMaster[i][0], 
-			StrEqual(g_tAgent[client], TMaster[i][1])?ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+	else
+	{
+		for(int i = 0; i < sizeof(TMaster); i++)
+		{
+			menu.AddItem(TMaster[i][1], TMaster[i][0],
+			StrEqual(g_tAgent[client], TMaster[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
+		}
 			
 	}
-	SetMenuExitBackButton(menu, true);
-	DisplayMenuAtItem(menu, client, num, MENU_TIME_FOREVER);
+	
+	menu.ExitBackButton = true;
+	menu.DisplayAt(client, num, MENU_TIME_FOREVER);
 }
 
-public int AgentChoosed(Handle:menu, MenuAction:action, param1, param2)
+int AgentChoosed(Menu menu, MenuAction action, int client, int selection)
 {
-	switch (action)
+	switch(action)
 	{
-		case MenuAction_Select:
+		case	MenuAction_Select:
 		{
 			char model[128];
-			GetMenuItem(menu, param2, model, sizeof(model));
+			menu.GetItem(selection, model, sizeof(model));
 			
-			if(g_iTeam[param1] == CS_TEAM_CT)
+			if(g_iTeam[client] == CS_TEAM_CT)
 			{
-				strcopy(g_ctAgent[param1], 128, model);
+				strcopy(g_ctAgent[client], 128, model);
 			}
 			else
 			{
-				strcopy(g_tAgent[param1], 128, model);
+				strcopy(g_tAgent[client], 128, model);
 			}
 				
-			if(cv_instant.BoolValue)
-				PrintToChat(param1, "Agent model choosed!");
-			else
-				PrintToChat(param1, "Agent model choosed! you will have it in the next spawn");
+			PrintToChat(client, cv_instant.BoolValue ? "Agent model choosed!":"Agent model choosed! you will have it in the next spawn");
 			
-			switch(g_iCategory[param1])
+			switch(g_iCategory[client])
 			{
-				case 1:
-				{
-					DisMenu(param1, GetMenuSelectionPosition());
-				}
-				case 2:
-				{
-					ExMenu(param1, GetMenuSelectionPosition());
-				}
-				case 3:
-				{
-					SuMenu(param1, GetMenuSelectionPosition());
-				}
-				case 4:
-				{
-					MaMenu(param1, GetMenuSelectionPosition());
-				}
+				case	1:	DisMenu(client, GetMenuSelectionPosition());
+				case	2:	ExMenu(client, GetMenuSelectionPosition());
+				case	3:	SuMenu(client, GetMenuSelectionPosition());
+				case	4:	MaMenu(client, GetMenuSelectionPosition());
 			}
 			
-			if(cv_instant.BoolValue && IsPlayerAlive(param1) && GetClientTeam(param1) == g_iTeam[param1])
+			if(cv_instant.BoolValue && IsPlayerAlive(client) && GetClientTeam(client) == g_iTeam[client])
 			{
 				if(cv_noOverwritte.BoolValue)
 				{
 					char dmodel[128];
-					GetClientModel(param1, dmodel, sizeof(dmodel));
+					GetClientModel(client, dmodel, sizeof(dmodel));
 					if(StrContains(dmodel, "models/player/custom_player/legacy/") == -1)
 					{
-						PrintToChat(param1, "You already have a custom player skin, remove your custom player skin for use a agent");
+						PrintToChat(client, "You already have a custom player skin, remove your custom player skin for use a agent");
 						return;
 					}
 				}
 				
-				SetEntityModel(param1, model);
+				SetEntityModel(client, model);
 				
 				if(cv_PreviewDuration.BoolValue)
 				{
-					SetThirdPersonMode(param1, true);
+					SetThirdPersonMode(client, true);
 					
-					if(g_hTimer[param1] != INVALID_HANDLE)
+					if(g_hTimer[client] != null)
 					{
-						KillTimer(g_hTimer[param1]);
-						g_hTimer[param1] = INVALID_HANDLE;
+						KillTimer(g_hTimer[client]);
+						g_hTimer[client] = null;
 					}
 					
-					g_hTimer[param1] = CreateTimer(cv_PreviewDuration.FloatValue, Timer_SetBackMode, param1, TIMER_FLAG_NO_MAPCHANGE);
+					g_hTimer[client] = CreateTimer(cv_PreviewDuration.FloatValue, Timer_SetBackMode, client, TIMER_FLAG_NO_MAPCHANGE);
 				}
 			}
 		}
-		case MenuAction_Cancel, MenuCancel_ExitBack:
+		case	MenuAction_Cancel, MenuCancel_ExitBack:
  		{
- 			OpenAgentsMenu(param1);
+ 			OpenAgentsMenu(client);
 			
 			if(cv_PreviewDuration.BoolValue)
 			{
-				SetThirdPersonMode(param1, false);
+				SetThirdPersonMode(client, false);
 				
-				if(g_hTimer[param1] != INVALID_HANDLE)
+				if(g_hTimer[client] != null)
 				{
-					KillTimer(g_hTimer[param1]);
-					g_hTimer[param1] = INVALID_HANDLE;
+					KillTimer(g_hTimer[client]);
+					g_hTimer[client] = null;
 				}
 			}
  		}
 
 		case MenuAction_End:
 		{
-			CloseHandle(menu);
+			delete menu;
 		}
 	}
 }
 
-public Action Event_PlayerSpawn(Event event, const char[] sName, bool bDontBroadcast)
+Action Event_PlayerSpawn(Event event, const char[] sName, bool bDontBroadcast)
 {
 	CreateTimer(cv_timer.FloatValue, Timer_ApplySkin, event.GetInt("userid"));
 }
 
-public Action Timer_ApplySkin(Handle timer, int id)
+Action Timer_ApplySkin(Handle timer, int id)
 {
 	int client = GetClientOfUserId(id);
 	
@@ -733,15 +730,15 @@ public Action Timer_ApplySkin(Handle timer, int id)
 	SetEntityModel(client, model);
 }
 
-public Action Timer_SetBackMode(Handle hTimer, any client)
+Action Timer_SetBackMode(Handle hTimer, any client)
 {
 	SetThirdPersonMode(client, false);
-	g_hTimer[client] = INVALID_HANDLE;
+	g_hTimer[client] = null;
 }
 
-SetThirdPersonMode(int client, bool bEnable)
+void SetThirdPersonMode(int client, bool bEnable)
 {
-	Handle mp_forcecamera;
+	ConVar mp_forcecamera;
 	if(!mp_forcecamera)
 	{
 		mp_forcecamera = FindConVar("mp_forcecamera");
@@ -765,7 +762,7 @@ SetThirdPersonMode(int client, bool bEnable)
 		SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 1);
 		SetEntProp(client, Prop_Send, "m_iFOV", 90);
 		char sValue[4];
-		GetConVarString(mp_forcecamera, sValue, sizeof(sValue));
+		mp_forcecamera.GetString(sValue, sizeof(sValue));
 		SendConVarValue(client, mp_forcecamera, sValue);
 		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDE_RADAR_CSGO);
 		SetEntProp(client, Prop_Send, "m_iHideHUD", GetEntProp(client, Prop_Send, "m_iHideHUD") & ~HIDE_CROSSHAIR_CSGO);
@@ -782,7 +779,7 @@ public void OnClientPutInServer(int client)
 
 public Action Hook_SetTransmit(int client, int agent)
 {
-	if(client != agent && g_hTimer[agent] != INVALID_HANDLE)
+	if(client != agent && g_hTimer[agent] != null)
 	{
 		if(cv_HidePlayers.IntValue == 2)
 		{
@@ -796,17 +793,14 @@ public Action Hook_SetTransmit(int client, int agent)
 	return Plugin_Continue;
 }
 
-public Action OnPlayerTeam(Event event, char[] name, bool dontBroadcast)
+Action OnPlayerTeam(Event event, const char[] name, bool dontBroadcast)
 {
-	g_iTeam[GetClientOfUserId(event.GetInt("userid"))] = GetEventInt(event, "team");
+	g_iTeam[GetClientOfUserId(event.GetInt("userid"))] = event.GetInt("team");
 	
 	return Plugin_Continue;
 }
 
 stock bool isAgentSelected(int client)
 {
-	if(strlen(g_tAgent[client]) < 1 && strlen(g_ctAgent[client]) < 1)
-		return true;
-		
-	return false;
+	return	(strlen(g_tAgent[client]) < 1 && strlen(g_ctAgent[client]) < 1);
 }
