@@ -29,6 +29,9 @@ Handle g_hTimer[MAXPLAYERS+1] = INVALID_HANDLE;
 // Valve Agents list by category and team
 char CTDistinguished[][][] =
 {
+	{"Primeiro Tenente | Brazilian 1st Battalion",			"models/player/custom_player/legacy/ctm_st6_variantn.mdl"},
+	{"D Squadron Officer | NZSAS",							"models/player/custom_player/legacy/ctm_sas_variantg.mdl"},
+	{"Aspirant | Gendarmerie Nationale",					"models/player/custom_player/legacy/ctm_gendarmerie_variantd.mdl"},
 	{"Seal Team 6 Soldier | NSWC SEAL",						"models/player/custom_player/legacy/ctm_st6_variante.mdl"},
 	{"3rd Commando Company | KSK",							"models/player/custom_player/legacy/ctm_st6_variantk.mdl"},
 	{"Operator | FBI SWAT",									"models/player/custom_player/legacy/ctm_fbi_variantf.mdl"},
@@ -39,6 +42,8 @@ char CTDistinguished[][][] =
 
 char TDistinguished[][][] =
 {
+	{"Trapper Aggressor | Guerrilla Warfare",				"models/player/custom_player/legacy/tm_jungle_raider_variantf.mdl"},
+	{"Mr. Muhlik | Elite Crew",								"models/player/custom_player/legacy/tm_leet_variantj.mdl"},
 	{"Enforcer | Phoenix",									"models/player/custom_player/legacy/tm_phoenix_variantf.mdl"},
 	{"Soldier | Phoenix",									"models/player/custom_player/legacy/tm_phoenix_varianth.mdl"},
 	{"Ground Rebel  | Elite Crew",							"models/player/custom_player/legacy/tm_leet_variantg.mdl"},
@@ -48,6 +53,9 @@ char TDistinguished[][][] =
 
 char CTExceptional[][][] =
 {
+	{"Officer Jacques Beltram | Gendarmerie Nationale",		"models/player/custom_player/legacy/ctm_gendarmerie_variante.mdl"},
+	{"Lieutenant 'Tree Hugger' Farlow | SWAT",				"models/player/custom_player/legacy/ctm_swat_variantk.mdl"},
+	{"Sous-Lieutenant Medic | Gendarmerie Nationale",		"models/player/custom_player/legacy/ctm_gendarmerie_varianta.mdl"},
 	{"Markus Delrow | FBI",									"models/player/custom_player/legacy/ctm_fbi_variantg.mdl"},
 	{"Buckshot | NSWC SEAL",								"models/player/custom_player/legacy/ctm_st6_variantg.mdl"},
 	{"John 'Van Healen' Kask | SWAT",						"models/player/custom_player/legacy/ctm_swat_variantg.mdl"},
@@ -57,6 +65,8 @@ char CTExceptional[][][] =
 
 char TExceptional[][][] =
 {
+	{"Col. Mangos Dabisi | Guerrilla Warfare",				"models/player/custom_player/legacy/tm_jungle_raider_variantd.mdl"},
+	{"Trapper | Guerrilla Warfare",							"models/player/custom_player/legacy/tm_jungle_raider_variantf2.mdl"},
 	{"Maximus | Sabre",										"models/player/custom_player/legacy/tm_balkan_varianti.mdl"},
 	{"Osiris | Elite Crew",									"models/player/custom_player/legacy/tm_leet_varianth.mdl"},
 	{"Slingshot | Phoenix",									"models/player/custom_player/legacy/tm_phoenix_variantg.mdl"},
@@ -67,6 +77,8 @@ char TExceptional[][][] =
 
 char CTSuperior[][][] =
 {
+	{"Chem-Haz Capitaine | Gendarmerie Nationale",			"models/player/custom_player/legacy/ctm_gendarmerie_variantb.mdl"},
+	{"Lieutenant Rex Krikey | SEAL Frogman",				"models/player/custom_player/legacy/ctm_diver_variantc.mdl"},
 	{"Michael Syfers | FBI Sniper",							"models/player/custom_player/legacy/ctm_fbi_varianth.mdl"},
 	{"'Two Times' McCoy | USAF TACP",						"models/player/custom_player/legacy/ctm_st6_variantm.mdl"},
 	{"1st Lieutenant Farlow | SWAT",						"models/player/custom_player/legacy/ctm_swat_variantf.mdl"},
@@ -75,6 +87,9 @@ char CTSuperior[][][] =
 
 char TSuperior[][][] =
 {
+	{"Bloody Darryl The Strapped | The Professionals",		"models/player/custom_player/legacy/tm_professional_varf5.mdl"},
+	{"Elite Trapper Solman | Guerrilla Warfare",			"models/player/custom_player/legacy/tm_jungle_raider_varianta.mdl"},
+	{"Arno The Overgrown | Guerrilla Warfare",				"models/player/custom_player/legacy/tm_jungle_raider_variantc.mdl"},
 	{"Blackwolf | Sabre",									"models/player/custom_player/legacy/tm_balkan_variantj.mdl"},
 	{"Prof. Shahmat | Elite Crew",							"models/player/custom_player/legacy/tm_leet_varianti.mdl"},
 	{"Rezan The Ready | Sabre",								"models/player/custom_player/legacy/tm_balkan_variantg.mdl"},
@@ -85,6 +100,9 @@ char TSuperior[][][] =
 
 char CTMaster[][][] =
 {
+	{"Chef d'Escadron Rouchard | Gendarmerie Nationale",	"models/player/custom_player/legacy/ctm_gendarmerie_variantc.mdl"},
+	{"Cmdr. Frank 'Wet Sox' Baroud | SEAL Frogman",			"models/player/custom_player/legacy/ctm_diver_variantb.mdl"},
+	{"Cmdr. Davida 'Goggles' Fernandez | SEAL Frogman",		"models/player/custom_player/legacy/ctm_diver_varianta.mdl"},
 	{"Lt. Commander Ricksaw | NSWC SEAL",					"models/player/custom_player/legacy/ctm_st6_varianti.mdl"},
 	{"Special Agent Ava | FBI",								"models/player/custom_player/legacy/ctm_fbi_variantb.mdl"},
 	{"Cmdr. Mae 'Dead Cold' Jamison | SWAT",				"models/player/custom_player/legacy/ctm_swat_variante.mdl"},
@@ -92,6 +110,9 @@ char CTMaster[][][] =
 
 char TMaster[][][] =
 {
+	{"Vypa Sista of the Revolution | Guerrilla Warfare",	"models/player/custom_player/legacy/tm_jungle_raider_variante.mdl"},
+	{"'Medium Rare' Crasswater | Guerrilla Warfare",		"models/player/custom_player/legacy/tm_jungle_raider_variantb2.mdl"},
+	{"Crasswater The Forgotten | Guerrilla Warfare",		"models/player/custom_player/legacy/tm_jungle_raider_variantb.mdl"},
 	{"'The Doctor' Romanov | Sabre",						"models/player/custom_player/legacy/tm_balkan_varianth.mdl"},
 	{"The Elite Mr. Muhlik | Elite Crew",					"models/player/custom_player/legacy/tm_leet_variantf.mdl"},
 	{"Sir Bloody Miami Darryl | The Professionals",			"models/player/custom_player/legacy/tm_professional_varf.mdl"},
