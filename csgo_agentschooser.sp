@@ -15,18 +15,18 @@
  * this program. If not, see http://www.gnu.org/licenses/.
  */
 
-#include <sdkhooks>
-#include <sdktools>
-#include <cstrike>
-#include <clientprefs>
+#include	<sdktools>
+#include	<sdkhooks>
+#include	<cstrike>
+#include	<clientprefs>
 
-#pragma semicolon 1
-#pragma newdecls required
+#pragma		semicolon	1
+#pragma		newdecls	required
 
-#define HIDE_CROSSHAIR_CSGO 1<<8
-#define HIDE_RADAR_CSGO 1<<12
+#define		HIDE_CROSSHAIR_CSGO	1<<8
+#define		HIDE_RADAR_CSGO		1<<12
 
-Handle g_hTimer[MAXPLAYERS+1] = null;
+Handle	g_hTimer[MAXPLAYERS+1] = null;
 
 // Valve Agents list by category and team
 char CTDistinguished[][][] =
@@ -124,25 +124,26 @@ char TMaster[][][] =
 	{"Sir Bloody Loudmouth Darryl | The Professionals",		"models/player/custom_player/legacy/tm_professional_varf4.mdl"},
 };
 
-#define DATA "1.2"
+#define		DATA	"1.2.0"
 
 public Plugin myinfo =
 {
-	name = "SM Franug CS:GO Agents Chooser",
-	author = "Franc1sco franug & Romeo",
-	description = "",
-	version = DATA,
-	url = "http://steamcommunity.com/id/franug"
+	name		=	"[CS:GO] Franug Agents Chooser",
+	author		=	"Franc1sco franug & Romeo, TrueProfessional, Teamkiller324",
+	description	=	"Plugin giving you opportunity to change agents.",
+	version 	=	DATA,
+	url			=	"http://steamcommunity.com/id/franug"
 }
 
-int g_iTeam[MAXPLAYERS + 1], g_iCategory[MAXPLAYERS + 1];
-char g_ctAgent[MAXPLAYERS + 1][128], g_tAgent[MAXPLAYERS + 1][128];
+int		g_iTeam[MAXPLAYERS + 1], g_iCategory[MAXPLAYERS + 1];
 
-Cookie c_CTAgent, c_TAgent;
+char	g_ctAgent[MAXPLAYERS + 1][128], g_tAgent[MAXPLAYERS + 1][128];
 
-ConVar cv_timer, cv_noOverwritte, cv_instant, cv_autoopen, cv_PreviewDuration, cv_HidePlayers;
+Cookie	c_CTAgent, c_TAgent;
 
-bool _checkedMsg[MAXPLAYERS + 1];
+ConVar	cv_version, cv_timer, cv_noOverwritte, cv_instant, cv_autoopen, cv_PreviewDuration, cv_HidePlayers;
+
+bool	_checkedMsg[MAXPLAYERS + 1];
 
 public void OnPluginStart()
 {
@@ -157,18 +158,20 @@ public void OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("player_team", OnPlayerTeam, EventHookMode_Post);
 	
-	cv_autoopen = CreateConVar("sm_csgoagents_autoopen", "0", "Enable or disable auto open menu when you connect and you didnt select a agent yet");
-	cv_instant = CreateConVar("sm_csgoagents_instantly", "1", "Enable or disable apply agents skins instantly");
-	cv_timer = CreateConVar("sm_csgoagents_timer", "0.2", "Time on Spawn for apply agent skins");
-	cv_noOverwritte = CreateConVar("sm_csgoagents_nooverwrittecustom", "1", "No apply agent model if the user already have a custom model. 1 = no apply when custom model, 0 = disable this feature");
-	cv_PreviewDuration = CreateConVar("sm_csgoagents_previewduration", "3.0", "Preview duration when choosing an agent. Disable: 0");
-	cv_HidePlayers = CreateConVar("sm_csgoagents_hideplayers", "0", "Hide players when thirdperson view active.\nDisable: 0\nEnemies: 1\nAll: 2", _, true, 0.0, true, 2.0);
+	cv_version			= CreateConVar("sm_csgoagents_version",				DATA,	"Agents Chooser - Version.");
+	cv_autoopen			= CreateConVar("sm_csgoagents_autoopen",			"0",	"Agent Chooser - Enable/Disable auto open menu when you connect and you didnt select a agent yet", _, true, 0.0, true, 1.0);
+	cv_instant			= CreateConVar("sm_csgoagents_instantly",			"1",	"Agent Chooser - Enable/Disable apply agents skins instantly", _, true, 0.0, true, 1.0);
+	cv_timer			= CreateConVar("sm_csgoagents_timer",				"0.2",	"Agent Chooser - Time on Spawn for apply agent skins", _, true, 0.0);
+	cv_noOverwritte		= CreateConVar("sm_csgoagents_nooverwrittecustom",	"1",	"Agent Chooser - No apply agent model if the user already have a custom model. \n1 = No apply when custom model \n0 = Disable this feature", _, true, 0.0, true, 1.0);
+	cv_PreviewDuration	= CreateConVar("sm_csgoagents_previewduration",		"3.0",	"Agent Chooser - Preview duration when choosing an agent. Disable: 0", _, true, 0.0);
+	cv_HidePlayers		= CreateConVar("sm_csgoagents_hideplayers",			"0",	"Agent Chooser - Hide players when thirdperson view active.\nDisable: 0\nEnemies: 1\nAll: 2", _, true, 0.0, true, 2.0);
 	
+	cv_version.AddChangeHook(VersionCallback);
 	cv_HidePlayers.AddChangeHook(OnCvarChange); // use SetTransmit only when is needed
 	
 	for(int i = 1; i <= MaxClients; i++)
 	{
-		if(IsClientInGame(i) && AreClientCookiesCached(i))
+		if(IsValidClient(i) && AreClientCookiesCached(i))
 		{
 			OnClientCookiesCached(i);
 		}
@@ -177,7 +180,15 @@ public void OnPluginStart()
 	AutoExecConfig(true, "csgo_agentschooser");
 }
 
-void OnCvarChange(ConVar convar, const char[] oldValue, const char[] newValue)
+/**
+ *	Makes sure the version console variable isn't changed.
+ */
+void VersionCallback(ConVar cvar, const char[] oldvalue, const char[] newvalue)
+{
+	cvar.SetString(DATA);
+}
+
+void OnCvarChange(ConVar cvar, const char[] oldValue, const char[] newValue)
 {
 	int iNewValue = StringToInt(newValue);
 	int iOldValue = StringToInt(oldValue);
@@ -186,7 +197,7 @@ void OnCvarChange(ConVar convar, const char[] oldValue, const char[] newValue)
 	{
 		for(int i = 1; i <= MaxClients; i++)
 		{
-			if(IsClientInGame(i))
+			if(IsValidClient(i))
 			{
 				OnClientPutInServer(i);
 			}
@@ -197,7 +208,7 @@ void OnCvarChange(ConVar convar, const char[] oldValue, const char[] newValue)
 		// save cpu usage when we dont want the hideplayers feature
 		for(int i = 1; i <= MaxClients; i++)
 		{
-			if(IsClientInGame(i))
+			if(IsValidClient(i))
 			{
 				SDKUnhook(i, SDKHook_SetTransmit, Hook_SetTransmit);
 			}
@@ -423,6 +434,7 @@ int SelectTeam(Menu menu, MenuAction action, int client, int selection)
 				case	0:	g_iTeam[client] = CS_TEAM_CT;
 				case	1:	g_iTeam[client] = CS_TEAM_T;
 			}
+			
 			OpenAgentsMenu(client);
 		}
 
@@ -521,7 +533,9 @@ void DisMenu(int client, int num)	{
 void ExMenu(int client, int num)
 {
 	Menu menu = new Menu(AgentChoosed, MenuAction_Select  | MenuAction_End);
+	
 	menu.SetTitle("Exceptional Agents");
+	
 	if(g_iTeam[client] == CS_TEAM_CT)
 	{
 		for(int i = 0; i < sizeof(CTExceptional); i++)
@@ -540,6 +554,7 @@ void ExMenu(int client, int num)
 		}
 			
 	}
+	
 	menu.ExitBackButton = true;
 	menu.DisplayAt(client, num, MENU_TIME_FOREVER);
 }
@@ -601,7 +616,7 @@ void MaMenu(int client, int num)
 	menu.DisplayAt(client, num, MENU_TIME_FOREVER);
 }
 
-int AgentChoosed(Menu menu, MenuAction action, int client, int selection)
+int AgentChoosed(Menu menu, MenuAction action, any client, int selection)
 {
 	switch(action)
 	{
@@ -610,13 +625,10 @@ int AgentChoosed(Menu menu, MenuAction action, int client, int selection)
 			char model[128];
 			menu.GetItem(selection, model, sizeof(model));
 			
-			if(g_iTeam[client] == CS_TEAM_CT)
+			switch(g_iTeam[client])
 			{
-				strcopy(g_ctAgent[client], 128, model);
-			}
-			else
-			{
-				strcopy(g_tAgent[client], 128, model);
+				case	CS_TEAM_CT:	strcopy(g_ctAgent[client], 128, model);
+				case	CS_TEAM_T:	strcopy(g_tAgent[client], 128, model);
 			}
 				
 			PrintToChat(client, cv_instant.BoolValue ? "Agent model choosed!":"Agent model choosed! you will have it in the next spawn");
@@ -690,17 +702,18 @@ Action Timer_ApplySkin(Handle timer, int id)
 {
 	int client = GetClientOfUserId(id);
 	
-	if (!client || !IsClientInGame(client) || !IsPlayerAlive(client) || !AreClientCookiesCached(client))return;
+	if(id < 1 || !IsValidClient(client) || !IsPlayerAlive(client) || !AreClientCookiesCached(client))
+		return;
 	
-	int team = GetClientTeam(client);
 	char model[255];
+	switch(GetClientTeam(client))
+	{
+		case	CS_TEAM_CT:	strcopy(model, sizeof(model), g_ctAgent[client]);
+		case	CS_TEAM_T:	strcopy(model, sizeof(model), g_tAgent[client]);
+	}
 	
-	if(team == CS_TEAM_CT)
-		strcopy(model, sizeof(model), g_ctAgent[client]);
-	else if(team == CS_TEAM_T)
-		strcopy(model, sizeof(model), g_tAgent[client]);
 		
-	if (strlen(model) < 1)
+	if(strlen(model) < 1)
 	{
 		if(cv_autoopen.BoolValue && !_checkedMsg[client])
 		{
@@ -727,10 +740,11 @@ Action Timer_ApplySkin(Handle timer, int id)
 			return;
 		}
 	}
+	
 	SetEntityModel(client, model);
 }
 
-Action Timer_SetBackMode(Handle hTimer, any client)
+Action Timer_SetBackMode(Handle timer, any client)
 {
 	SetThirdPersonMode(client, false);
 	g_hTimer[client] = null;
@@ -738,15 +752,14 @@ Action Timer_SetBackMode(Handle hTimer, any client)
 
 void SetThirdPersonMode(int client, bool bEnable)
 {
-	ConVar mp_forcecamera;
-	if(!mp_forcecamera)
+	ConVar mp_forcecamera = FindConVar("mp_forcecamera");
+	if(mp_forcecamera == null)
 	{
-		mp_forcecamera = FindConVar("mp_forcecamera");
+		return;
 	}
 	
 	if(bEnable)
 	{
-		
 		SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", 0); 
 		SetEntProp(client, Prop_Send, "m_iObserverMode", 1);
 		SetEntProp(client, Prop_Send, "m_bDrawViewmodel", 0);
@@ -777,10 +790,9 @@ public void OnClientPutInServer(int client)
 	}
 }
 
-public Action Hook_SetTransmit(int client, int agent)
+Action Hook_SetTransmit(int client, int agent)
 {
-	if(client != agent && g_hTimer[agent] != null)
-	{
+	if(client != agent && g_hTimer[agent] != null)	{
 		if(cv_HidePlayers.IntValue == 2)
 		{
 			return Plugin_Handled;
@@ -793,14 +805,35 @@ public Action Hook_SetTransmit(int client, int agent)
 	return Plugin_Continue;
 }
 
-Action OnPlayerTeam(Event event, const char[] name, bool dontBroadcast)
+void OnPlayerTeam(Event event, const char[] name, bool dontBroadcast)
 {
-	g_iTeam[GetClientOfUserId(event.GetInt("userid"))] = event.GetInt("team");
+	int userid = event.GetInt("userid");
 	
-	return Plugin_Continue;
+	if(userid > 0)
+		g_iTeam[GetClientOfUserId(userid)] = event.GetInt("team");
 }
 
 stock bool isAgentSelected(int client)
 {
 	return	(strlen(g_tAgent[client]) < 1 && strlen(g_ctAgent[client]) < 1);
+}
+
+bool IsValidClient(int client)
+{
+	if(client == 0 || client == -1)
+		return	false;
+	if(client < 1 || client > MaxClients)
+		return	false;
+	if(!IsClientInGame(client))
+		return	false;
+	if(!IsClientConnected(client))
+		return	false;
+	if(IsFakeClient(client))
+		return	false;
+	if(IsClientReplay(client))
+		return	false;
+	if(IsClientSourceTV(client))
+		return	false;
+	
+	return	true;
 }
