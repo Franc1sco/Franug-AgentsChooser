@@ -129,8 +129,8 @@ char TMaster[][][] =
 public Plugin myinfo =
 {
 	name		=	"[CS:GO] Franug Agents Chooser",
-	author		=	"Franc1sco franug & Romeo, TrueProfessional, Teamkiller324",
-	description	=	"Plugin giving you opportunity to change agents.",
+	author		=	"Franc1sco franug, Romeo, TrueProfessional, Teamkiller324",
+	description	=	"Plugin giving you opportunity to change agents",
 	version 	=	DATA,
 	url			=	"http://steamcommunity.com/id/franug"
 }
@@ -213,8 +213,7 @@ void OnCvarChange(ConVar cvar, const char[] oldValue, const char[] newValue)
 				SDKUnhook(i, SDKHook_SetTransmit, Hook_SetTransmit);
 			}
 		}
-	}
-	
+	}	
 }
 
 // I generate these files automatically with code instead of do it manually like a good programmer :p
@@ -281,7 +280,7 @@ Action Command_GenerateModelsForSkinchooser(int client, int args)
 	kv.ExportToFile("addons/sourcemod/configs/sm_skinchooser_withagents.cfg");
 	delete kv;
 	
-	ReplyToCommand(client, "CFG file generated for models");
+	ReplyToCommand(client, "CFG file generated for models.");
 	
 	return Plugin_Handled;
 }
@@ -374,7 +373,7 @@ Action Command_GenerateModelsForStore(int client, int args)
 	kv.ExportToFile("addons/sourcemod/configs/storeitems_withagents.txt");
 	delete kv;
 	
-	ReplyToCommand(client, "CFG file generated for models");
+	ReplyToCommand(client, "CFG file generated for models.");
 	
 	return Plugin_Handled;
 }
@@ -415,8 +414,8 @@ Action Command_Main(int client, int args)
 	
 	menu.SetTitle("Choose Agents Team:");
 	
-	menu.AddItem("", "Counter-Terrorist team");
-	menu.AddItem("", "Terrorist team");
+	menu.AddItem("", "Counter-Terrorist Team");
+	menu.AddItem("", "Terrorist Team");
 	menu.ExitButton = true;
 	menu.Display(client, MENU_TIME_FOREVER);
 	
@@ -451,7 +450,7 @@ void OpenAgentsMenu(int client)
 
 	menu.SetTitle("Choose Agents type:");
 	
-	menu.AddItem("", "Use Default skins");
+	menu.AddItem("", "Use Default Skins");
 	menu.AddItem("", "Distinguished Agents");
 	menu.AddItem("", "Exceptional Agents");
 	menu.AddItem("", "Superior Agents");
@@ -479,7 +478,8 @@ int SelectType(Menu menu, MenuAction action, int client, int selection)
 					
 					strcopy(g_ctAgent[client], 128, "");
 					strcopy(g_tAgent[client], 128, "");
-					PrintToChat(client, "You dont use a agent model now");
+					
+					PrintToChat(client, "You dont use a agent model now.");
 					
 					OpenAgentsMenu(client);
 				}
@@ -503,7 +503,8 @@ int SelectType(Menu menu, MenuAction action, int client, int selection)
 	}
 }
 
-void DisMenu(int client, int num)	{
+void DisMenu(int client, int num)
+{
 	Menu menu = new Menu(AgentChoosed, MenuAction_Select  | MenuAction_End);
 	
 	menu.SetTitle("Distinguished Agents");
@@ -515,7 +516,6 @@ void DisMenu(int client, int num)	{
 			menu.AddItem(CTDistinguished[i][1], CTDistinguished[i][0], 
 			StrEqual(g_ctAgent[client], CTDistinguished[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	else
 	{
@@ -523,7 +523,6 @@ void DisMenu(int client, int num)	{
 			menu.AddItem(TDistinguished[i][1], TDistinguished[i][0], 
 			StrEqual(g_tAgent[client], TDistinguished[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	
 	menu.ExitBackButton = true;
@@ -543,7 +542,6 @@ void ExMenu(int client, int num)
 			menu.AddItem(CTExceptional[i][1], CTExceptional[i][0], 
 			StrEqual(g_ctAgent[client], CTExceptional[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	else
 	{
@@ -552,7 +550,6 @@ void ExMenu(int client, int num)
 			menu.AddItem(TExceptional[i][1], TExceptional[i][0], 
 			StrEqual(g_tAgent[client], TExceptional[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	
 	menu.ExitBackButton = true;
@@ -572,7 +569,6 @@ void SuMenu(int client, int num)
 			menu.AddItem(CTSuperior[i][1], CTSuperior[i][0], 
 			StrEqual(g_ctAgent[client], CTSuperior[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	else
 	{
@@ -600,7 +596,6 @@ void MaMenu(int client, int num)
 			menu.AddItem(CTMaster[i][1], CTMaster[i][0], 
 			StrEqual(g_ctAgent[client], CTMaster[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	else
 	{
@@ -609,7 +604,6 @@ void MaMenu(int client, int num)
 			menu.AddItem(TMaster[i][1], TMaster[i][0],
 			StrEqual(g_tAgent[client], TMaster[i][1]) ? ITEMDRAW_DISABLED:ITEMDRAW_DEFAULT);
 		}
-			
 	}
 	
 	menu.ExitBackButton = true;
@@ -630,8 +624,8 @@ int AgentChoosed(Menu menu, MenuAction action, any client, int selection)
 				case	CS_TEAM_CT:	strcopy(g_ctAgent[client], 128, model);
 				case	CS_TEAM_T:	strcopy(g_tAgent[client], 128, model);
 			}
-				
-			PrintToChat(client, cv_instant.BoolValue ? "Agent model choosed!":"Agent model choosed! you will have it in the next spawn");
+			
+			PrintToChat(client, cv_instant.BoolValue ? "Agent model choosed!":"Agent model choosed! you will have it in the next spawn.");
 			
 			switch(g_iCategory[client])
 			{
@@ -649,7 +643,7 @@ int AgentChoosed(Menu menu, MenuAction action, any client, int selection)
 					GetClientModel(client, dmodel, sizeof(dmodel));
 					if(StrContains(dmodel, "models/player/custom_player/legacy/") == -1)
 					{
-						PrintToChat(client, "You already have a custom player skin, remove your custom player skin for use a agent");
+						PrintToChat(client, "You already have a custom player skin, remove your custom player skin for use a agent.");
 						return;
 					}
 				}
@@ -685,7 +679,7 @@ int AgentChoosed(Menu menu, MenuAction action, any client, int selection)
 				}
 			}
  		}
-
+		
 		case MenuAction_End:
 		{
 			delete menu;
@@ -710,8 +704,7 @@ Action Timer_ApplySkin(Handle timer, int id)
 	{
 		case	CS_TEAM_CT:	strcopy(model, sizeof(model), g_ctAgent[client]);
 		case	CS_TEAM_T:	strcopy(model, sizeof(model), g_tAgent[client]);
-	}
-	
+	}	
 		
 	if(strlen(model) < 1)
 	{
@@ -736,7 +729,7 @@ Action Timer_ApplySkin(Handle timer, int id)
 		GetClientModel(client, dmodel, sizeof(dmodel));
 		if(StrContains(dmodel, "models/player/custom_player/legacy/") == -1)
 		{
-			PrintToChat(client, "You already have a custom player skin, remove your custom player skin for use a agent");
+			PrintToChat(client, "You already have a custom player skin, remove your custom player skin for use a agent.");
 			return;
 		}
 	}
