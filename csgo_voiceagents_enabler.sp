@@ -9,26 +9,24 @@ char Master[][] =
 	"models/player/custom_player/legacy/tm_leet_variantf.mdl",
 }
 
-
 #define DATA "1.0"
 
 public Plugin myinfo =
 {
-	name = "SM Voice Agents Enabler",
+	name = "[CS:GO] Franug Voice Agents Enabler",
 	author = "Franc1sco franug",
-	description = "",
+	description = "Voice Agents",
 	version = DATA,
 	url = "http://steamcommunity.com/id/franug"
 }
-
 
 public void OnPluginStart()
 {
 	AddNormalSoundHook(VoiceLineSounds);
 }
 
-public Action:VoiceLineSounds(clients[64], &numClients, String:sample[PLATFORM_MAX_PATH], &client, &channel, &Float:volume, &level, &pitch, &flags){
-
+public Action:VoiceLineSounds(clients[64], &numClients, String:sample[PLATFORM_MAX_PATH], &client, &channel, &Float:volume, &level, &pitch, &flags)
+{
 	if(!IsValidClient(client) || !IsPlayerAlive(client))
 		return Plugin_Continue;
 		
@@ -41,8 +39,7 @@ public Action:VoiceLineSounds(clients[64], &numClients, String:sample[PLATFORM_M
 		return Plugin_Continue;
 		
 	if(StrContains(sample, "player\\vo\\", false) == -1)
-		return Plugin_Continue;
-		
+		return Plugin_Continue;		
 
 	int iParts;
 	char sParts[36][255];
@@ -169,13 +166,10 @@ public Action:VoiceLineSounds(clients[64], &numClients, String:sample[PLATFORM_M
 			}
 			default:
 				return Plugin_Continue;
-			
-		}
-		
+		}		
 	}
 	return Plugin_Continue;
 } 
-
 
 PostEditSoundPath(String:input[], String:output[], int size)
 {
@@ -211,7 +205,6 @@ PostEditSoundPath(String:input[], String:output[], int size)
 	return Format(output, size, "%s", input);
 }
 
-
 int getMasterModel(char[] model)
 {
 	if(StrContains(model, "models/player/custom_player/legacy/") == -1) // player use a custom model by other plugin
@@ -224,7 +217,6 @@ int getMasterModel(char[] model)
 			return i+1;
 		}			
 	}
-	
 	return 0;
 }
 
