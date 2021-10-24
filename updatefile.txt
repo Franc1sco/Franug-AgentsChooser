@@ -1,0 +1,17 @@
+"Updater"
+{
+	"Information"
+	{
+		"Version"
+		{
+			"Latest"	"1.2.0"
+		}
+	}
+	"Files"
+	{
+		"Plugin"	"Path_SM/plugins/csgo_agentschooser.smx"
+		"Source"	"Path_SM/scripting/csgo_agentschooser.sp"
+		"Plugin"	"Path_SM/plugins/csgo_agentschooser.smx"
+		"Source"	"Path_SM/scripting/csgo_voiceagents_enabler.sp"
+	}
+}
